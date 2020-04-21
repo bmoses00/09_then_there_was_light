@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
   light[LOCATION][1] = 0.75;
   light[LOCATION][2] = 1;
 
-  light[COLOR][RED] = 0;
+  light[COLOR][RED] = 128;
   light[COLOR][GREEN] = 255;
   light[COLOR][BLUE] = 255;
 
@@ -49,9 +49,9 @@ int main(int argc, char **argv) {
   dreflect[GREEN] = 0.5;
   dreflect[BLUE] = 0.5;
 
-  sreflect[RED] = 0.5;
-  sreflect[GREEN] = 0.5;
-  sreflect[BLUE] = 0.5;
+  sreflect[RED] = .5;
+  sreflect[GREEN] = .5;
+  sreflect[BLUE] = .5;
 
   screen s;
   zbuffer zb;

@@ -25,27 +25,90 @@
 //lighting functions
 color get_lighting( double *normal, double *view, color alight, double light[2][3], double *areflect, double *dreflect, double *sreflect) {
   color i;
+
+  color a = calculate_ambient(alight, areflect);
+  color d = calculate_diffuse(light, dreflect, normal);
+  color s = calculate_specular(light, sreflect, view, normal);
+
+  i.red = a.red + d.red + s.red;
+  i.green = a.green + d.green + s.green;
+  i.blue = a.blue + d.blue + s.blue;
+
+
+  limit_color(&i);
+
   return i;
 }
 
 color calculate_ambient(color alight, double *areflect ) {
   color a;
+
+  a.red = alight.red * areflect[0];
+  a.green = alight.green * areflect[1];
+  a.blue = alight.blue * areflect[2];
+
   return a;
 }
 
 color calculate_diffuse(double light[2][3], double *dreflect, double *normal ) {
   color d;
+
+  normalize(light[LOCATION]);
+  normalize(normal);
+
+  double dp = dot_product(light[LOCATION], normal);
+  if (dp < 0) dp = 0;
+
+  d.red = light[COLOR][RED] * dreflect[0] * dp;
+  d.green = light[COLOR][GREEN] * dreflect[1] * dp;
+  d.blue = light[COLOR][BLUE] * dreflect[2] * dp;
+
   return d;
 }
 
 color calculate_specular(double light[2][3], double *sreflect, double *view, double *normal ) {
-
   color s;
+  int n = 6;
+
+  double r[3];
+  double s_vector[3];
+  double t[3];
+
+  normalize(light[LOCATION]);
+  normalize(normal);
+
+  double dp = dot_product(light[LOCATION], normal);
+  if (dp < 0) dp = 0;
+
+  t[0] = normal[0] * dp;
+  t[1] = normal[1] * dp;
+  t[2] = normal[2] * dp;
+
+  s_vector[0] = t[0] - light[LOCATION][0];
+  s_vector[1] = t[1] - light[LOCATION][1];
+  s_vector[2] = t[2] - light[LOCATION][2];
+
+  r[0] = t[0] + s_vector[0];
+  r[1] = t[1] + s_vector[1];
+  r[2] = t[2] + s_vector[2];
+
+  double dp_r_view = dot_product(r, view);
+  if (dp_r_view < 0) dp_r_view = 0;
+
+  s.red = light[COLOR][RED] * sreflect[0] * pow(dp_r_view, n);
+  s.green = light[COLOR][GREEN] * sreflect[1] * pow(dp_r_view, n);
+  s.blue = light[COLOR][BLUE] * sreflect[2] * pow(dp_r_view, n);
+
   return s;
 }
 
 //limit each component of c to a max of 255
 void limit_color( color * c ) {
+
+  if (c->red > 255) c->red = 255;
+  if (c->green > 255) c->green = 255;
+  if (c->blue > 255) c->blue = 255;
+
 }
 
 //vector functions
