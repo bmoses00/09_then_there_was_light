@@ -1,3 +1,13 @@
+#images
+*.ppm
+*.png
+*.jpg
+*.jpeg
+*.gif
+
+#python pycs
+*.pyc
+
 # Prerequisites
 *.d
 
